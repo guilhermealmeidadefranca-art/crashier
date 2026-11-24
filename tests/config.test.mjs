@@ -23,13 +23,18 @@ test('o jogo funciona dentro do APK: caminhos relativos e placar carregado', () 
     assert.ok(!/(src|href)=["']\/(?!\/)/.test(html), nome + ': use caminhos relativos (sem / no começo)');
   }
   const index = readFileSync(pasta + 'index.html', 'utf8');
-  for (const script of ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'jogo.js']) {
+  for (const script of ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'src/main.mjs']) {
     assert.ok(index.includes('src="' + script + '"'), 'index.html precisa carregar ' + script);
   }
-  const ordem = ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'jogo.js']
+  const ordem = ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'src/main.mjs']
     .map((nome) => index.indexOf('src="' + nome + '"'));
   assert.deepEqual(ordem, [...ordem].sort((a, b) => a - b), 'scripts do jogo precisam carregar na ordem prevista');
   assert.ok(index.includes('href="placar.css"'), 'index.html precisa carregar placar.css');
+  assert.ok(index.includes('id="pista-pixi"'), 'Pixi recebe seu próprio canvas sem remover o renderer antigo');
+  assert.ok(existsSync(pasta + 'vendor/pixi.min.mjs'), 'PixiJS é servido localmente para Pages e APK offline');
+  assert.ok(existsSync(pasta + 'vendor/PIXIJSLICENSE.txt'), 'licença do PixiJS está junto do bundle');
+  assert.ok(existsSync(pasta + 'jogo.js'), 'renderer 2D antigo continua disponível como fallback');
   assert.ok(readFileSync(pasta + 'sw.js', 'utf8').includes("'./audio.js'"), 'offline cache inclui o som');
+  assert.ok(readFileSync(pasta + 'sw.js', 'utf8').includes("'./vendor/pixi.min.mjs'"), 'offline cache inclui PixiJS');
   assert.doesNotMatch(readFileSync(pasta + 'audio.js', 'utf8'), /https?:\/\//, 'áudio não usa fontes externas');
 });

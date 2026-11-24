@@ -14,9 +14,9 @@
   <script src="placar.js"></script>
   <script src="placar-ui.js"></script>
   <script src="regras.js"></script>
-  <script src="audio.js" defer></script>
+  <script src="audio.js"></script>
   <script src="pwa.js" defer></script>
-  <script src="jogo.js" defer></script>
+  <script type="module" src="src/main.mjs"></script>
 </head>
 <body>
   <main class="app">
@@ -64,6 +64,7 @@
         <div class="stat stat-rota"><span>ROTA</span><strong id="faixa-atual">INFERIOR</strong></div>
         <button id="botao-pausar" class="botao-pausa" type="button" aria-label="Pausar corrida" title="Pausar (Esc)">Ⅱ</button>
       </div>
+      <div id="pista-pixi" class="pista-pixi" hidden aria-label="Pista urbana em duas rotas"></div>
       <canvas id="pista" width="640" height="360" aria-label="Pista urbana pixelada"></canvas>
       <p id="mensagem" class="mensagem" aria-live="polite">CORRA!</p>
       <div class="controles" aria-label="Ações do personagem">
@@ -91,7 +92,7 @@
     <section id="tela-fim" class="painel tela tela-fim" hidden aria-label="Fim da partida">
       <p class="eyebrow">FIM DE LINHA</p>
       <h2 id="titulo-fim">A cidade ficou para trás.</h2>
-      <canvas id="animacao-fim" width="640" height="160" aria-label="Animação da queda do corredor"></canvas>
+      <div id="fim-pixi" class="fim-pixi" aria-label="Último instante da corrida"></div>
       <p id="causa-fim" class="causa-fim"></p>
       <div class="resultado-cartao">
         <div><span>PONTOS</span><strong id="resultado">0</strong></div>

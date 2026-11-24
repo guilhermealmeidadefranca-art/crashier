@@ -1,9 +1,13 @@
 // Service worker: tenta sempre a versão nova pela internet; sem internet, usa a cópia guardada.
-const CACHE = 'crashier-v3';
+const CACHE = 'crashier-v4';
 const ARQUIVOS = [
   './', './index.html', './estilo.css', './placar.css', './config.js', './placar.js',
   './placar-ui.js', './regras.js', './audio.js', './jogo.js', './pwa.js', './manifest.webmanifest',
-  './icone-192.png', './icone-512.png'
+  './icone-192.png', './icone-512.png', './src/main.mjs', './src/pixi/engine.mjs',
+  './src/pixi/world.mjs', './src/model/collision.mjs', './src/model/simulation.mjs',
+  './src/render/city.mjs', './src/render/character.mjs', './src/render/obstacles.mjs',
+  './src/render/effects.mjs', './src/input/controls.mjs', './src/ui/screens.mjs',
+  './vendor/pixi.min.mjs', './vendor/PIXIJSLICENSE.txt'
 ];
 
 self.addEventListener('install', (evento) => {
