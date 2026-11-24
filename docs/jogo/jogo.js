@@ -28,7 +28,9 @@
   const obstaculos = [];
   const xJogador = 103;
   const yChao = 201;
-  const teclas = { ArrowLeft: 'baixo', ArrowUp: 'alto', ArrowDown: 'deslizar', KeyX: 'rolar', Space: 'baixo' };
+  const teclas = { ArrowDown: 'deslizar', ArrowRight: 'rolar' };
+  const INTERVALO_SALTO_DUPLO = 280;
+  let timerSaltoBaixo = null;
 
   function mostrar(tela) {
     ['tela-inicio', 'tela-jogo', 'tela-fim'].forEach((id) => { $(id).hidden = id !== tela; });
@@ -197,8 +199,24 @@
     botao.addEventListener('pointerdown', (evento) => { evento.preventDefault(); acionar(botao.dataset.acao); });
   });
   window.addEventListener('keydown', (evento) => {
+    if ($('tela-jogo').hidden) return;
+    if (evento.code === 'ArrowUp') {
+      evento.preventDefault();
+      if (evento.repeat) return;
+      if (timerSaltoBaixo !== null) {
+        window.clearTimeout(timerSaltoBaixo);
+        timerSaltoBaixo = null;
+        acionar('alto');
+      } else {
+        timerSaltoBaixo = window.setTimeout(() => {
+          timerSaltoBaixo = null;
+          acionar('baixo');
+        }, INTERVALO_SALTO_DUPLO);
+      }
+      return;
+    }
     const acao = teclas[evento.code];
-    if (acao && !$('tela-jogo').hidden) { evento.preventDefault(); if (!evento.repeat) acionar(acao); }
+    if (acao) { evento.preventDefault(); if (!evento.repeat) acionar(acao); }
   });
   let inicioToque = null;
   canvas.addEventListener('pointerdown', (evento) => { inicioToque = { x: evento.clientX, y: evento.clientY }; });
