@@ -18,16 +18,18 @@
     carro: { acao: 'alto', pontos: 75, largura: 56, altura: 37, emoji: 'CAR' },
     caminhão: { acao: 'alto', pontos: 100, largura: 74, altura: 49, emoji: 'TRUCK' },
     cerca: { acao: 'deslizar', pontos: 75, largura: 58, altura: 37, emoji: 'FENCE' },
+    mesa: { acao: 'deslizar', pontos: 75, largura: 68, altura: 43, emoji: 'TABLE' },
     galho: { acao: 'deslizar', pontos: 60, largura: 60, altura: 20, emoji: 'BRANCH' },
     caixa: { acao: 'rolar', pontos: 120, largura: 30, altura: 30, emoji: 'CRATE' }
   };
   const POR_BIOMA = {
-    bairro: ['poça', 'cone', 'carro', 'cerca', 'caixa'],
+    bairro: ['poça', 'cone', 'carro', 'mesa', 'caixa'],
     rodovia: ['cone', 'carro', 'caminhão', 'cerca', 'caixa'],
     parque: ['poça', 'cone', 'galho', 'cerca', 'caixa'],
     floresta: ['poça', 'galho', 'cerca', 'caixa', 'carro']
   };
-  const DURACAO_ACAO = { baixo: 460, alto: 760, deslizar: 560, rolar: 480 };
+  // Janelas mais longas deixam o tempo de resposta confortável no celular.
+  const DURACAO_ACAO = { baixo: 850, alto: 1100, deslizar: 900, rolar: 850 };
 
   function biomaEm(distancia) {
     return BIOMAS[Math.floor(Math.max(0, distancia) / 1200) % BIOMAS.length];
@@ -46,11 +48,16 @@
     if (estado.terminou || !DURACAO_ACAO[acao]) return estado;
     return { ...estado, acao, acaoAte: agora + DURACAO_ACAO[acao] };
   }
+  function podeSuperar(estado, obstaculo, agora) {
+    if (estado.terminou || !obstaculo) return false;
+    const regra = TIPOS[obstaculo.tipo];
+    return Boolean(regra && estado.acao === regra.acao && agora <= estado.acaoAte);
+  }
   function avancar(estado, deltaMs) {
     if (estado.terminou) return estado;
     const delta = Math.max(0, Math.min(100, Number(deltaMs) || 0));
     const distancia = estado.distancia + delta * (0.012 + estado.distancia / 100000);
-    return { ...estado, distancia, pontos: Math.floor(distancia) + estado.bonus, velocidade: 1 + distancia / 900 };
+    return { ...estado, distancia, pontos: Math.floor(distancia) + estado.bonus, velocidade: Math.min(3, 1 + distancia / 900) };
   }
   function resolverImpacto(estado, obstaculo, agora) {
     if (estado.terminou || !obstaculo || obstaculo.resolvido) return { estado, sucesso: false, ignorado: true };
@@ -66,5 +73,5 @@
   }
   function terminar(estado) { return estado.terminou ? estado : { ...estado, terminou: true }; }
 
-  return { BIOMAS, TIPOS, DURACAO_ACAO, biomaEm, novaPartida, criarObstaculo, aplicarAcao, avancar, resolverImpacto, terminar };
+  return { BIOMAS, TIPOS, DURACAO_ACAO, biomaEm, novaPartida, criarObstaculo, aplicarAcao, podeSuperar, avancar, resolverImpacto, terminar };
 });

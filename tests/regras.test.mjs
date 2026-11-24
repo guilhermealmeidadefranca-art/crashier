@@ -18,6 +18,11 @@ test('a distância cresce com delta e a velocidade aumenta', () => {
   assert.ok(estado.velocidade > 1);
 });
 
+test('a velocidade tem um limite para dar tempo de reagir aos obstáculos', () => {
+  const estado = Regras.avancar({ ...Regras.novaPartida(), distancia: 10000 }, 100);
+  assert.equal(estado.velocidade, 3);
+});
+
 test('delta negativo não volta a distância', () => {
   assert.equal(Regras.avancar(Regras.novaPartida(), -100).distancia, 0);
 });
@@ -36,12 +41,26 @@ test('a paisagem muda em ciclos de bairro, rodovia, parque e floresta', () => {
 
 test('ação correta supera o obstáculo e soma bônus de pontuação', () => {
   let estado = Regras.avancar(Regras.novaPartida(), 100);
-  estado = Regras.aplicarAcao(estado, 'rolar', 1200);
-  const resultado = Regras.resolverImpacto(estado, { tipo: 'caixa' }, 1300);
+  estado = Regras.aplicarAcao(estado, 'deslizar', 100);
+  const mesa = { tipo: 'mesa' };
+  assert.equal(Regras.podeSuperar(estado, mesa, 900), true);
+  const resultado = Regras.resolverImpacto(estado, mesa, 900);
   assert.equal(resultado.sucesso, true);
-  assert.equal(resultado.quebrou, true);
-  assert.equal(resultado.estado.pontos, 121);
+  assert.equal(resultado.quebrou, false);
   assert.equal(resultado.estado.obstaculos, 1);
+
+  let caixaEstado = Regras.aplicarAcao(Regras.novaPartida(), 'rolar', 100);
+  const caixa = Regras.resolverImpacto(caixaEstado, { tipo: 'caixa' }, 200);
+  assert.equal(caixa.sucesso, true);
+  assert.equal(caixa.quebrou, true);
+  assert.equal(caixa.estado.pontos, 120);
+});
+
+test('a ação correta pode ser ativada durante a passagem do obstáculo', () => {
+  const estado = Regras.aplicarAcao(Regras.novaPartida(), 'alto', 300);
+  assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 1300), true);
+  assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 1500), false);
+  assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 400), true);
 });
 
 test('ação errada encerra a partida e informa o obstáculo', () => {

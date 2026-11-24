@@ -28,6 +28,7 @@
   const obstaculos = [];
   const xJogador = 103;
   const yChao = 201;
+  const ACAO_DICA = { baixo: '↑ PULO BAIXO', alto: '↑↑ PULO ALTO', deslizar: '↓ DESLIZE', rolar: '→ ROLE' };
   const teclas = { ArrowDown: 'deslizar', ArrowRight: 'rolar' };
   const INTERVALO_SALTO_DUPLO = 280;
   let timerSaltoBaixo = null;
@@ -117,6 +118,10 @@
       ctx.fillStyle = '#9a572d'; ctx.fillRect(x, yChao - r.altura, r.largura, r.altura);
       ctx.strokeStyle = '#e1a15f'; ctx.lineWidth = 3; ctx.strokeRect(x + 2, yChao - r.altura + 2, r.largura - 4, r.altura - 4);
       ctx.beginPath(); ctx.moveTo(x + 5, yChao - 5); ctx.lineTo(x + r.largura - 5, yChao - r.altura + 5); ctx.stroke();
+    } else if (o.tipo === 'mesa') {
+      ctx.fillStyle = '#a66b3d'; ctx.fillRect(x, yChao - 43, r.largura, 8);
+      ctx.fillStyle = '#69452e'; ctx.fillRect(x + 7, yChao - 35, 7, 28); ctx.fillRect(x + r.largura - 14, yChao - 35, 7, 28);
+      ctx.fillStyle = '#d49a63'; ctx.fillRect(x + 14, yChao - 41, r.largura - 28, 3);
     } else if (o.tipo === 'cerca') {
       ctx.fillStyle = '#d9c9aa'; ctx.fillRect(x, yChao - 35, r.largura, 6); ctx.fillRect(x + 4, yChao - 35, 5, 35); ctx.fillRect(x + r.largura - 9, yChao - 35, 5, 35);
     } else if (o.tipo === 'galho') {
@@ -130,6 +135,14 @@
       ctx.fillStyle = '#fb923c'; ctx.fillRect(x + 6, yChao - 23, 8, 20); ctx.fillRect(x + 3, yChao - 11, 14, 4); ctx.fillRect(x, yChao - 4, 20, 4);
     } else {
       ctx.fillStyle = '#4fc3d7'; ctx.fillRect(x, yChao - 7, r.largura, 7); ctx.fillStyle = '#a5f3fc'; ctx.fillRect(x + 4, yChao - 6, 9, 2);
+    }
+    if (o.x < 390 && o.x > -r.largura) {
+      const dica = ACAO_DICA[r.acao];
+      ctx.font = 'bold 9px monospace';
+      const largura = ctx.measureText(dica).width + 8;
+      const topo = Math.max(14, yChao - r.altura - 22);
+      ctx.fillStyle = '#090811'; ctx.fillRect(x + r.largura / 2 - largura / 2, topo - 11, largura, 15);
+      ctx.fillStyle = '#f0abfc'; ctx.textAlign = 'center'; ctx.fillText(dica, x + r.largura / 2, topo);
     }
   }
   function desenhar(agora) {
@@ -146,7 +159,7 @@
     cancelAnimationFrame(frame);
     $('resultado').textContent = Math.floor(estado.pontos);
     const tipo = Regras.TIPOS[motivo];
-    $('causa-fim').textContent = motivo ? `A sombra bateu em ${tipo ? ({ poça: 'uma poça', cone: 'um cone', carro: 'um carro', caminhão: 'um caminhão', cerca: 'uma cerca', galho: 'um galho', caixa: 'uma caixa' })[motivo] : 'um obstáculo'}.` : 'A cidade ficou para trás.';
+    $('causa-fim').textContent = motivo ? `A sombra não conseguiu superar ${tipo ? ({ poça: 'a poça', cone: 'o cone', carro: 'o carro', caminhão: 'o caminhão', cerca: 'a cerca', mesa: 'a mesa', galho: 'o galho', caixa: 'a caixa' })[motivo] : 'o obstáculo'}.` : 'A cidade ficou para trás.';
     $('situacao-salvamento').textContent = 'Salvando recorde…';
     mostrar('tela-fim');
     Placar.registrarPartida(Math.floor(estado.pontos), { distancia: Math.floor(estado.distancia), obstaculos: estado.obstaculos })
@@ -167,12 +180,21 @@
     }
     for (const o of obstaculos) {
       o.x -= pixels;
-      if (!o.resolvido && o.x <= xJogador + 31) {
-        o.resolvido = true;
-        const resultado = Regras.resolverImpacto(estado, o, agora);
-        estado = resultado.estado;
-        if (!resultado.sucesso) { encerrar(resultado.motivo); return; }
-        $('mensagem').textContent = resultado.quebrou ? 'CRASH! Caixa quebrada +' + resultado.pontos : 'LIMPO! +' + resultado.pontos;
+      if (!o.resolvido) {
+        const regra = Regras.TIPOS[o.tipo];
+        const naZonaDePassagem = o.x <= xJogador + 28 && o.x + regra.largura >= xJogador + 6;
+        if (naZonaDePassagem && Regras.podeSuperar(estado, o, agora)) {
+          o.resolvido = true;
+          const resultado = Regras.resolverImpacto(estado, o, agora);
+          estado = resultado.estado;
+          $('mensagem').textContent = resultado.quebrou ? 'CAIXA QUEBRADA! +' + resultado.pontos : 'BOA! +' + resultado.pontos;
+        } else if (o.x + regra.largura < xJogador + 6) {
+          // Dá tempo de reagir enquanto o objeto cruza a área do personagem.
+          o.resolvido = true;
+          estado = Regras.terminar(estado);
+          encerrar(o.tipo);
+          return;
+        }
       }
     }
     for (let i = obstaculos.length - 1; i >= 0; i--) if (obstaculos[i].x < -90) obstaculos.splice(i, 1);
