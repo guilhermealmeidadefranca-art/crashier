@@ -47,11 +47,11 @@
       <div class="intro">
         <p class="eyebrow">A CIDADE NÃO ESPERA</p>
         <h2>Uma cidade. Nenhuma rota segura.</h2>
-        <p>Corra por casas, rodovias e parques. Leia a seta sobre cada obstáculo e escolha seu movimento antes de cruzá-lo.</p>
+        <p>Alterne entre as duas rotas elevadas da cidade, leia os avisos e escolha entre salto, deslize e rolamento antes de cada obstáculo.</p>
       </div>
       <div class="acoes-inicio">
         <button id="botao-jogar" class="botao primario" type="button"><span aria-hidden="true">▶</span> COMEÇAR CORRIDA</button>
-        <p class="teclas"><kbd>↑</kbd> salto baixo · <kbd>↑ ↑</kbd> salto alto · <kbd>↓</kbd> deslizar · <kbd>→</kbd> rolar</p>
+        <p class="teclas"><kbd>A</kbd> rota inferior · <kbd>D</kbd> rota superior<br><kbd>↑</kbd> pulo baixo/duplo alto · <kbd>↓</kbd> deslizar · <kbd>→</kbd> rolar</p>
       </div>
     </section>
 
@@ -61,17 +61,20 @@
         <div class="stat"><span>PONTOS</span><strong id="pontos">0</strong></div>
         <div class="stat stat-velocidade"><span>VELOCIDADE</span><strong><b id="velocidade">1.0</b><small>x</small></strong></div>
         <div class="stat stat-bioma"><span>SETOR</span><strong id="bioma">BAIRRO</strong></div>
+        <div class="stat stat-rota"><span>ROTA</span><strong id="faixa-atual">INFERIOR</strong></div>
         <button id="botao-pausar" class="botao-pausa" type="button" aria-label="Pausar corrida" title="Pausar (Esc)">Ⅱ</button>
       </div>
       <canvas id="pista" width="640" height="360" aria-label="Pista urbana pixelada"></canvas>
       <p id="mensagem" class="mensagem" aria-live="polite">CORRA!</p>
       <div class="controles" aria-label="Ações do personagem">
+        <button class="acao rota rota-inferior" data-faixa="inferior" type="button"><span>⇩</span> ROTA INFERIOR</button>
+        <button class="acao rota rota-superior" data-faixa="superior" type="button"><span>⇧</span> ROTA SUPERIOR</button>
         <button class="acao" data-acao="baixo" type="button"><span>↗</span> PULO BAIXO</button>
         <button class="acao" data-acao="alto" type="button"><span>⬆</span> PULO ALTO</button>
         <button class="acao" data-acao="deslizar" type="button"><span>↘</span> DESLIZAR</button>
         <button class="acao" data-acao="rolar" type="button"><span>⟳</span> ROLAR</button>
       </div>
-      <p class="dica-controle">Use as setas do teclado ou toque nos botões. Esc pausa.</p>
+      <p class="dica-controle">A = rota inferior · D = rota superior · ↑ pulo baixo/duplo alto · ↓ deslizar · → rolar · Esc pausa</p>
     </section>
 
     <section id="tela-pausa" class="painel tela tela-modal" hidden aria-labelledby="titulo-pausa">
@@ -88,6 +91,7 @@
     <section id="tela-fim" class="painel tela tela-fim" hidden aria-label="Fim da partida">
       <p class="eyebrow">FIM DE LINHA</p>
       <h2 id="titulo-fim">A cidade ficou para trás.</h2>
+      <canvas id="animacao-fim" width="640" height="160" aria-label="Animação da queda do corredor"></canvas>
       <p id="causa-fim" class="causa-fim"></p>
       <div class="resultado-cartao">
         <div><span>PONTOS</span><strong id="resultado">0</strong></div>

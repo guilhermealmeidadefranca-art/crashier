@@ -76,23 +76,30 @@ h1 { color: #f2e7ff; font-size: clamp(1.45rem, 5vw, 2.1rem); letter-spacing: .18
 .teclas { color: #aaa2bc; font-size: .66rem; text-align: right; }
 kbd { display: inline-block; min-width: 22px; padding: 2px 4px; border: 1px solid #68587a; border-bottom-width: 3px; border-radius: 4px; color: #f1e5ff; text-align: center; font: 700 .74rem ui-monospace, monospace; }
 .partida { display: grid; gap: 8px; padding: 10px; animation: entrar .2s ease-out both; }
-.hud { display: grid; grid-template-columns: 1.05fr .8fr .8fr 1fr auto; align-items: center; gap: 8px; }
+.hud { display: grid; grid-template-columns: 1.05fr .8fr .8fr 1fr .85fr auto; align-items: center; gap: 8px; }
 .stat { min-width: 0; display: grid; gap: 2px; }
 .stat > span { color: var(--suave); font-size: .56rem; letter-spacing: .12em; }
 .stat strong { display: flex; align-items: baseline; gap: 3px; color: #f0d8ff; font-size: clamp(.8rem, 2.5vw, 1.05rem); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .stat strong small { color: #aa9ebc; font-size: .62rem; }
 .stat-bioma strong { font-size: .72rem; letter-spacing: .08em; }
+.stat-rota strong { color: #d39cf0; font-size: .72rem; letter-spacing: .08em; }
+.stat-rota strong.texto-rota-superior { color: #72e5df; }
 .botao-pausa { width: 44px; min-height: 42px; border-color: #594a70; border-radius: 7px; background: #241e32; font-size: 1rem; }
 #pista { display: block; width: 100%; height: auto; max-height: min(52vh, 440px); max-height: min(52svh, 440px); aspect-ratio: 16 / 9; object-fit: contain; image-rendering: pixelated; background: #100d19; border: 1px solid #5c4771; border-radius: 4px; box-shadow: 0 6px 22px #0006; touch-action: none; }
 .mensagem { min-height: 18px; color: #e5c1ff; font-size: .69rem; font-weight: 700; letter-spacing: .1em; text-align: center; text-shadow: 0 0 12px #b56aee66; }
-.controles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.controles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .acao { min-width: 0; min-height: 56px; padding: 4px; border-color: #4e425e; border-radius: 7px; background: linear-gradient(#282238, #1b1827); font-size: clamp(.55rem, 1.6vw, .72rem); }
 .acao span { display: block; color: #d8b4fe; font-size: 1.15rem; line-height: 1.1; }
+.acao.rota { border-color: #44636b; background: linear-gradient(#1d343b, #18252d); }
+.acao.rota span { color: #72e5df; }
+.acao.rota-inferior { border-color: #684b79; background: linear-gradient(#332441, #211b2b); }
+.acao.rota-inferior span { color: #d39cf0; }
 .dica-controle { color: #8e859d; text-align: center; font-size: .62rem; }
 .tela-modal { min-height: 310px; }
 .acoes-modal { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 5px; }
 .tela-fim .causa-fim { color: #c8bdd7; }
 .resultado-cartao { display: flex; justify-content: center; gap: 10px; width: min(440px, 100%); }
+#animacao-fim { display: block; width: min(100%, 640px); height: auto; max-height: 160px; image-rendering: pixelated; border: 1px solid #514160; background: #100d18; }
 .resultado-cartao > div { flex: 1; display: grid; gap: 3px; padding: 13px; border: 1px solid #55436a; background: #0d0b15; }
 .resultado-cartao span { color: #a99eb8; font-size: .6rem; letter-spacing: .15em; }
 .resultado-cartao strong { color: #f2ddff; font-size: clamp(1.3rem, 5vw, 2rem); font-variant-numeric: tabular-nums; }
@@ -128,11 +135,11 @@ kbd { display: inline-block; min-width: 22px; padding: 2px 4px; border: 1px soli
   .audio-linha input[type="range"] { width: min(160px, 45%); }
 }
 @media (max-width: 380px) {
-  .hud { grid-template-columns: 1fr 1fr auto; }
+  .hud { grid-template-columns: 1fr 1fr 1fr auto; }
   .stat-velocidade { display: none; }
   .stat-bioma { text-align: right; }
-  .controles { gap: 4px; }
-  .acao { min-height: 52px; letter-spacing: 0; }
+  .controles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .acao { min-height: 48px; letter-spacing: 0; font-size: .59rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

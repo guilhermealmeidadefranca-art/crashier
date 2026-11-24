@@ -33,6 +33,8 @@
     floresta: ['poça', 'galho', 'cerca', 'caixa', 'carro']
   };
   // Janelas mais longas deixam o tempo de resposta confortável no celular.
+  const FAIXAS = { superior: { nome: 'SUPERIOR', chao: 194 }, inferior: { nome: 'INFERIOR', chao: 302 } };
+  const DURACAO_TROCA = 240;
   const DURACAO_ACAO = { baixo: 850, alto: 1100, deslizar: 900, rolar: 850 };
 
   function intervaloSpawn(distancia, sorteio) {
@@ -46,15 +48,40 @@
     return BIOMAS[Math.floor(Math.max(0, distancia) / 1200) % BIOMAS.length];
   }
   function novaPartida() {
-    return { distancia: 0, pontos: 0, bonus: 0, velocidade: 1, terminou: false, acao: '', acaoAte: 0, obstaculos: 0 };
+    return { distancia: 0, pontos: 0, bonus: 0, velocidade: 1, terminou: false, acao: '', acaoAte: 0, obstaculos: 0, faixa: 'inferior', trocaFaixa: null };
   }
-  function criarObstaculo(sorteio, id, distancia) {
+  function criarObstaculo(sorteio, id, distancia, faixa) {
     const aleatorio = typeof sorteio === 'function' ? sorteio : Math.random;
     const bioma = biomaEm(distancia).id;
     const lista = POR_BIOMA[bioma];
     const valor = Math.max(0, Math.min(.999999, Number(aleatorio()) || 0));
     const tipo = lista[Math.floor(valor * lista.length)];
-    return { id, tipo, bioma, x: 660, resolvido: false };
+    const caminho = faixa === 'superior' || faixa === 'inferior' ? faixa : (aleatorio() < .5 ? 'superior' : 'inferior');
+    return { id, tipo, bioma, faixa: caminho, x: 660, resolvido: false };
+  }
+  function trocarFaixa(estado, faixa, agora) {
+    if (estado.terminou || !FAIXAS[faixa] || estado.trocaFaixa) return estado;
+    if (estado.faixa === faixa) return estado;
+    return { ...estado, trocaFaixa: { origem: estado.faixa, destino: faixa, inicio: agora, fim: agora + DURACAO_TROCA } };
+  }
+  function faixaEm(estado, agora) {
+    const troca = estado.trocaFaixa;
+    if (!troca) return estado.faixa;
+    const progresso = Math.max(0, Math.min(1, (agora - troca.inicio) / DURACAO_TROCA));
+    // A colisão muda de rota quando o corredor termina a troca, junto da aterrissagem visual.
+    return progresso < 1 ? troca.origem : troca.destino;
+  }
+  function obstaculoNaFaixa(estado, obstaculo, agora) {
+    return Boolean(obstaculo && obstaculo.faixa === faixaEm(estado, agora));
+  }
+  function progressoTroca(estado, agora) {
+    if (!estado.trocaFaixa) return null;
+    const t = Math.max(0, Math.min(1, (agora - estado.trocaFaixa.inicio) / DURACAO_TROCA));
+    return { ...estado.trocaFaixa, t: t * t * (3 - 2 * t) };
+  }
+  function atualizarFaixa(estado, agora) {
+    if (!estado.trocaFaixa || agora < estado.trocaFaixa.fim) return estado;
+    return { ...estado, faixa: estado.trocaFaixa.destino, trocaFaixa: null };
   }
   function aplicarAcao(estado, acao, agora) {
     if (estado.terminou || !DURACAO_ACAO[acao]) return estado;
@@ -79,11 +106,11 @@
       return { estado: { ...estado, terminou: true, pontos: Math.floor(estado.distancia) + estado.bonus }, sucesso: false, motivo: obstaculo.tipo };
     }
     return {
-      estado: { ...estado, bonus: estado.bonus + regra.pontos, pontos: Math.floor(estado.distancia) + estado.bonus + regra.pontos, obstaculos: estado.obstaculos + 1, acao: '' },
+      estado: { ...estado, bonus: estado.bonus + regra.pontos, pontos: Math.floor(estado.distancia) + estado.bonus + regra.pontos, obstaculos: estado.obstaculos + 1 },
       sucesso: true, pontos: regra.pontos, quebrou: obstaculo.tipo === 'caixa'
     };
   }
   function terminar(estado) { return estado.terminou ? estado : { ...estado, terminou: true }; }
 
-  return { BIOMAS, TIPOS, NOMES, DURACAO_ACAO, biomaEm, intervaloSpawn, novaPartida, criarObstaculo, aplicarAcao, podeSuperar, avancar, resolverImpacto, terminar };
+  return { BIOMAS, TIPOS, NOMES, FAIXAS, DURACAO_TROCA, DURACAO_ACAO, biomaEm, intervaloSpawn, novaPartida, criarObstaculo, trocarFaixa, faixaEm, obstaculoNaFaixa, progressoTroca, atualizarFaixa, aplicarAcao, podeSuperar, avancar, resolverImpacto, terminar };
 });

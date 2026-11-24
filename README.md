@@ -29,15 +29,17 @@ tests/                   ← testes: node --test tests/*.test.mjs
 
 ## Crashier
 
-Endless runner pixel art em uma rota urbana que passa por bairro, rodovia, parque e floresta.
-O personagem é uma sombra e pode dar salto baixo, salto alto, deslizar e rolar. O Canvas usa
-camadas de cenário com parallax, obstáculos com indicação da ação, partículas e sprites
-desenhados em código, sem imagens externas.
+Endless runner pixel art por bairro, rodovia, parque e floresta, com duas pistas jogáveis:
+uma rota elevada em ciano e a rota inferior em roxo. Cada obstáculo pertence a uma pista;
+troque de caminho para evitá-lo ou use a ação correta. O corredor é uma sombra animada em
+sprites de oito quadros gerados localmente para corrida, saltos, deslize, rolagem, recuperação
+e queda. A caixa solta lascas de madeira físicas ao ser quebrada.
 
-**Controles:** no teclado, seta para cima faz salto baixo, dois toques rápidos fazem salto alto,
-seta para baixo desliza, seta para a direita rola e Esc pausa. No celular, use os botões grandes
-ou gestos no Canvas. O menu de áudio controla música e efeitos separadamente; o áudio só inicia
-depois de tocar em Começar corrida.
+**Controles:** A seleciona a rota inferior e D a superior (240 ms de transição); seta para cima
+faz salto baixo, dois toques rápidos fazem salto alto, seta para baixo desliza, seta para a direita
+rola e Esc pausa. No celular, use os dois botões de rota e os quatro botões de ação abaixo da
+pista. O menu de áudio controla música e efeitos separadamente; o áudio só inicia depois de
+tocar em Começar corrida.
 
 Ao adicionar um recurso visual ou de jogo, mantenha os desenhos em docs/jogo/jogo.js, as regras
 determinísticas em docs/jogo/regras.js e os sons originais em docs/jogo/audio.js. Valide com

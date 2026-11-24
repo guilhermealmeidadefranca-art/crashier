@@ -88,6 +88,7 @@
     else if (nome === 'impacto') { tom(95, 0.42, 'sawtooth', v, agora); tom(68, 0.5, 'triangle', v * 0.58, agora + 0.04); }
     else if (nome === 'acerto') { tom(660, 0.09, 'triangle', v * 0.55, agora); tom(880, 0.12, 'triangle', v * 0.4, agora + 0.07); }
     else if (nome === 'recorde') [523.25, 659.25, 783.99, 1046.5].forEach((n, i) => tom(n, 0.22, 'triangle', v * 0.46, agora + i * 0.13));
+    else if (nome === 'faixa') { tom(360, 0.1, 'triangle', v * 0.42, agora); tom(520, 0.13, 'square', v * 0.28, agora + 0.06); }
     else if (nome === 'menu') tom(330, 0.06, 'square', v * 0.28, agora);
   }
   function controles() {

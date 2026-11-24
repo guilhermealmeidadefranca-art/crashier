@@ -7,7 +7,8 @@ const Regras = require('../docs/jogo/regras.js');
 
 test('a partida começa sem distância, bônus ou fim', () => {
   assert.deepEqual(Regras.novaPartida(), {
-    distancia: 0, pontos: 0, bonus: 0, velocidade: 1, terminou: false, acao: '', acaoAte: 0, obstaculos: 0
+    distancia: 0, pontos: 0, bonus: 0, velocidade: 1, terminou: false, acao: '', acaoAte: 0,
+    obstaculos: 0, faixa: 'inferior', trocaFaixa: null
   });
 });
 
@@ -32,6 +33,11 @@ test('o sorteio recebido escolhe o obstáculo de modo previsível', () => {
   assert.equal(obstaculo.tipo, 'poça');
   assert.equal(obstaculo.id, 7);
   assert.equal(obstaculo.bioma, 'bairro');
+});
+
+test('o sorteio determinístico também escolhe a rota do obstáculo', () => {
+  assert.equal(Regras.criarObstaculo(() => .99, 3, 0).faixa, 'inferior');
+  assert.equal(Regras.criarObstaculo(() => 0, 4, 0).faixa, 'superior');
 });
 
 test('a paisagem muda em ciclos de bairro, rodovia, parque e floresta', () => {
@@ -60,6 +66,7 @@ test('ação correta supera o obstáculo e soma bônus de pontuação', () => {
   assert.equal(caixa.sucesso, true);
   assert.equal(caixa.quebrou, true);
   assert.equal(caixa.estado.pontos, 120);
+  assert.equal(caixa.estado.acao, 'rolar', 'a pose de rolamento não é cortada no contato');
 });
 
 test('a ação correta pode ser ativada durante a passagem do obstáculo', () => {
@@ -67,6 +74,35 @@ test('a ação correta pode ser ativada durante a passagem do obstáculo', () =>
   assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 1300), true);
   assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 1500), false);
   assert.equal(Regras.podeSuperar(estado, { tipo: 'carro' }, 400), true);
+});
+
+test('a troca entre as rotas dura 240 ms e interpola o movimento', () => {
+  const inicial = Regras.novaPartida();
+  const troca = Regras.trocarFaixa(inicial, 'superior', 100);
+  assert.equal(troca.faixa, 'inferior');
+  assert.equal(Regras.faixaEm(troca, 159), 'inferior');
+  assert.equal(Regras.faixaEm(troca, 220), 'inferior');
+  assert.ok(Regras.progressoTroca(troca, 250).t > .5);
+  assert.equal(Regras.atualizarFaixa(troca, 339), troca);
+  const concluida = Regras.atualizarFaixa(troca, 340);
+  assert.equal(concluida.faixa, 'superior');
+  assert.equal(concluida.trocaFaixa, null);
+  assert.equal(Regras.faixaEm(troca, 340), 'superior');
+});
+
+test('não inicia uma segunda troca no meio da animação e rejeita rotas inválidas', () => {
+  const troca = Regras.trocarFaixa(Regras.novaPartida(), 'superior', 0);
+  assert.equal(Regras.trocarFaixa(troca, 'inferior', 40), troca);
+  assert.equal(Regras.trocarFaixa(troca, 'rota-secreta', 40), troca);
+});
+
+test('os obstáculos pertencem a uma rota e só colidem com a rota ativa', () => {
+  const obstaculo = Regras.criarObstaculo(() => 0, 9, 0, 'superior');
+  let estado = Regras.novaPartida();
+  assert.equal(obstaculo.faixa, 'superior');
+  assert.equal(Regras.obstaculoNaFaixa(estado, obstaculo, 0), false);
+  estado = Regras.atualizarFaixa(Regras.trocarFaixa(estado, 'superior', 0), 240);
+  assert.equal(Regras.obstaculoNaFaixa(estado, obstaculo, 240), true);
 });
 
 test('ação errada encerra a partida e informa o obstáculo', () => {
