@@ -459,15 +459,20 @@
       ctx.fillStyle = '#74a55d'; ctx.fillRect(x + 13, y - 39, 9, 3); ctx.fillRect(x + 39, y - 45, 10, 3);
     } else if (o.tipo === 'caixa') {
       const impacto = o.quebraInicio == null ? -1 : performance.now() - o.quebraInicio;
-      if (impacto < 0 || impacto > 85) {
-        ctx.fillStyle = '#533322'; ctx.fillRect(x + 1, y - r.altura + 3, r.largura - 2, r.altura - 2);
-        ctx.fillStyle = '#a8663c'; ctx.fillRect(x + 4, y - r.altura, r.largura - 8, r.altura - 5);
-        ctx.fillStyle = '#d89a59'; ctx.fillRect(x + 6, y - r.altura + 3, r.largura - 12, 4);
-        ctx.fillStyle = '#8f5735'; ctx.fillRect(x + 8, y - r.altura + 9, 4, r.altura - 17); ctx.fillRect(x + r.largura - 12, y - r.altura + 9, 4, r.altura - 17);
-        ctx.fillStyle = '#c9844b'; ctx.fillRect(x + 10, y - 22, r.largura - 20, 7);
-        ctx.fillStyle = '#dfaa6a'; ctx.fillRect(x + 13, y - 21, r.largura - 26, 2);
-        ctx.fillStyle = '#f4d29c'; ctx.fillRect(x + 6, y - r.altura + 4, 3, 3); ctx.fillRect(x + r.largura - 10, y - r.altura + 4, 3, 3);
-      } else return;
+      if (impacto > 85) return;
+      const reagindo = impacto >= 0;
+      const impulso = reagindo ? Math.sin(Math.PI * Math.min(1, impacto / 85)) : 0;
+      ctx.save(); ctx.translate(x + r.largura / 2, y - r.altura / 2);
+      if (reagindo) { ctx.rotate(impulso * .15); ctx.translate(impulso * -2, impulso * 2); }
+      const cx = -r.largura / 2; const topo = -r.altura / 2;
+      ctx.fillStyle = '#533322'; ctx.fillRect(cx + 1, topo + 3, r.largura - 2, r.altura - 2);
+      ctx.fillStyle = '#a8663c'; ctx.fillRect(cx + 4, topo, r.largura - 8, r.altura - 5);
+      ctx.fillStyle = '#d89a59'; ctx.fillRect(cx + 6, topo + 3, r.largura - 12, 4);
+      ctx.fillStyle = '#8f5735'; ctx.fillRect(cx + 8, topo + 9, 4, r.altura - 17); ctx.fillRect(cx + r.largura - 12, topo + 9, 4, r.altura - 17);
+      ctx.fillStyle = '#c9844b'; ctx.fillRect(cx + 10, topo + 20, r.largura - 20, 7);
+      ctx.fillStyle = '#dfaa6a'; ctx.fillRect(cx + 13, topo + 21, r.largura - 26, 2);
+      ctx.fillStyle = '#f4d29c'; ctx.fillRect(cx + 6, topo + 4, 3, 3); ctx.fillRect(cx + r.largura - 10, topo + 4, 3, 3);
+      ctx.restore();
     }
     desenharRotulo(o, r);
   }
