@@ -15,7 +15,8 @@ docs/                    ← o GitHub Pages publica esta pasta
     index.html           ← telas do jogo
     estilo.css
     regras.js            ← regras do jogo, só funções puras (testadas)
-    jogo.js              ← liga as telas às regras e ao placar
+    jogo.js              ← corrida, menus, cenário e controles
+    audio.js             ← música e efeitos sintetizados no navegador
     placar.js            ← salvamento (NÃO MEXER)
     placar-ui.js         ← painel de login/pasta/ranking (NÃO MEXER)
 apps-script/Code.gs      ← "banco de dados" na Planilha Google (modo nuvem)
@@ -25,6 +26,22 @@ scripts/preparar.mjs     ← confere config.js e gera ícones e manifest
 scripts/criar-chave.sh   ← cria a chave de assinatura do APK (uma vez)
 tests/                   ← testes: node --test tests/*.test.mjs
 ```
+
+## Crashier
+
+Endless runner pixel art em uma rota urbana que passa por bairro, rodovia, parque e floresta.
+O personagem é uma sombra e pode dar salto baixo, salto alto, deslizar e rolar. O Canvas usa
+camadas de cenário com parallax, obstáculos com indicação da ação, partículas e sprites
+desenhados em código, sem imagens externas.
+
+**Controles:** no teclado, seta para cima faz salto baixo, dois toques rápidos fazem salto alto,
+seta para baixo desliza, seta para a direita rola e Esc pausa. No celular, use os botões grandes
+ou gestos no Canvas. O menu de áudio controla música e efeitos separadamente; o áudio só inicia
+depois de tocar em Começar corrida.
+
+Ao adicionar um recurso visual ou de jogo, mantenha os desenhos em docs/jogo/jogo.js, as regras
+determinísticas em docs/jogo/regras.js e os sons originais em docs/jogo/audio.js. Valide com
+node --test tests/*.test.mjs.
 
 ## Os três modos de salvamento (`"modo"` em `config.js`)
 

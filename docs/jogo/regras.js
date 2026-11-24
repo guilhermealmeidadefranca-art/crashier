@@ -13,14 +13,18 @@
     { id: 'floresta', nome: 'FLORESTA', paleta: ['#101d20', '#1b423c', '#22c55e'] }
   ];
   const TIPOS = {
-    poça: { acao: 'baixo', pontos: 50, largura: 28, altura: 8, emoji: '≈' },
-    cone: { acao: 'baixo', pontos: 50, largura: 18, altura: 28, emoji: '▲' },
-    carro: { acao: 'alto', pontos: 75, largura: 56, altura: 37, emoji: 'CAR' },
-    caminhão: { acao: 'alto', pontos: 100, largura: 74, altura: 49, emoji: 'TRUCK' },
-    cerca: { acao: 'deslizar', pontos: 75, largura: 58, altura: 37, emoji: 'FENCE' },
-    mesa: { acao: 'deslizar', pontos: 75, largura: 68, altura: 43, emoji: 'TABLE' },
-    galho: { acao: 'deslizar', pontos: 60, largura: 60, altura: 20, emoji: 'BRANCH' },
-    caixa: { acao: 'rolar', pontos: 120, largura: 30, altura: 30, emoji: 'CRATE' }
+    poça: { acao: 'baixo', pontos: 50, largura: 42, altura: 12, emoji: '≈' },
+    cone: { acao: 'baixo', pontos: 50, largura: 30, altura: 38, emoji: '▲' },
+    carro: { acao: 'alto', pontos: 75, largura: 78, altura: 54, emoji: 'CAR' },
+    caminhão: { acao: 'alto', pontos: 100, largura: 104, altura: 68, emoji: 'TRUCK' },
+    cerca: { acao: 'deslizar', pontos: 75, largura: 82, altura: 48, emoji: 'FENCE' },
+    mesa: { acao: 'deslizar', pontos: 75, largura: 92, altura: 58, emoji: 'TABLE' },
+    galho: { acao: 'deslizar', pontos: 60, largura: 84, altura: 30, emoji: 'BRANCH' },
+    caixa: { acao: 'rolar', pontos: 120, largura: 44, altura: 42, emoji: 'CRATE' }
+  };
+  const NOMES = {
+    poça: 'a poça', cone: 'o cone', carro: 'o carro', caminhão: 'o caminhão',
+    cerca: 'a cerca', mesa: 'a mesa', galho: 'o galho', caixa: 'a caixa'
   };
   const POR_BIOMA = {
     bairro: ['poça', 'cone', 'carro', 'mesa', 'caixa'],
@@ -30,6 +34,13 @@
   };
   // Janelas mais longas deixam o tempo de resposta confortável no celular.
   const DURACAO_ACAO = { baixo: 850, alto: 1100, deslizar: 900, rolar: 850 };
+
+  function intervaloSpawn(distancia, sorteio) {
+    const aleatorio = typeof sorteio === 'function' ? sorteio : Math.random;
+    const progresso = Math.min(1, Math.max(0, distancia) / 3600);
+    // Com velocidade máxima de 3x, 1,3 s ainda deixa mais de 700 px entre obstáculos.
+    return Math.max(1300, 1900 - progresso * 420 - aleatorio() * 160);
+  }
 
   function biomaEm(distancia) {
     return BIOMAS[Math.floor(Math.max(0, distancia) / 1200) % BIOMAS.length];
@@ -41,8 +52,9 @@
     const aleatorio = typeof sorteio === 'function' ? sorteio : Math.random;
     const bioma = biomaEm(distancia).id;
     const lista = POR_BIOMA[bioma];
-    const tipo = lista[Math.min(lista.length - 1, Math.floor(aleatorio() * lista.length))];
-    return { id, tipo, bioma, x: 500, resolvido: false };
+    const valor = Math.max(0, Math.min(.999999, Number(aleatorio()) || 0));
+    const tipo = lista[Math.floor(valor * lista.length)];
+    return { id, tipo, bioma, x: 660, resolvido: false };
   }
   function aplicarAcao(estado, acao, agora) {
     if (estado.terminou || !DURACAO_ACAO[acao]) return estado;
@@ -57,7 +69,7 @@
     if (estado.terminou) return estado;
     const delta = Math.max(0, Math.min(100, Number(deltaMs) || 0));
     const distancia = estado.distancia + delta * (0.012 + estado.distancia / 100000);
-    return { ...estado, distancia, pontos: Math.floor(distancia) + estado.bonus, velocidade: Math.min(3, 1 + distancia / 900) };
+    return { ...estado, distancia, pontos: Math.floor(distancia) + estado.bonus, velocidade: Math.min(3, 1 + distancia / 1800) };
   }
   function resolverImpacto(estado, obstaculo, agora) {
     if (estado.terminou || !obstaculo || obstaculo.resolvido) return { estado, sucesso: false, ignorado: true };
@@ -73,5 +85,5 @@
   }
   function terminar(estado) { return estado.terminou ? estado : { ...estado, terminou: true }; }
 
-  return { BIOMAS, TIPOS, DURACAO_ACAO, biomaEm, novaPartida, criarObstaculo, aplicarAcao, podeSuperar, avancar, resolverImpacto, terminar };
+  return { BIOMAS, TIPOS, NOMES, DURACAO_ACAO, biomaEm, intervaloSpawn, novaPartida, criarObstaculo, aplicarAcao, podeSuperar, avancar, resolverImpacto, terminar };
 });

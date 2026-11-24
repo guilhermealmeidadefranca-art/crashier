@@ -1,47 +1,34 @@
-/* Estilo do painel do placar (placar-ui.js). Pode mudar as cores à vontade. */
-
-/* Garante que hidden esconda mesmo quando o CSS do jogo põe display: grid/flex na tela. */
+/* Placar oficial do modelo, com a paleta noturna do Crashier. */
 [hidden] { display: none !important; }
-
 .placar {
   display: grid;
   gap: 10px;
-  padding: 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #14213d;
-  font: 16px/1.4 system-ui, sans-serif;
-}
-.placar-titulo { margin: 8px 0 0; font-size: 1.1rem; }
-.placar-resumo { margin: 0; font-weight: 700; }
-.placar-nota { margin: 0; color: #45506a; font-size: 0.92rem; }
-.placar-mensagem { margin: 0; min-height: 1.2em; color: #166534; font-weight: 600; }
-.placar-mensagem.placar-erro { color: #9a3412; }
-.placar-formulario { display: grid; gap: 8px; }
-.placar-campo {
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 2px solid #c9cfdb;
+  padding: clamp(12px, 2.2vw, 18px);
+  border: 1px solid #453858;
   border-radius: 10px;
-  font: inherit;
+  background: linear-gradient(145deg, #1b1727, #12101a);
+  color: #f1eaff;
+  font: 14px/1.45 ui-monospace, "Courier New", monospace;
+  box-shadow: 0 10px 25px #0005;
 }
-.placar-botao {
-  min-height: 44px;
-  padding: 8px 14px;
-  border: 0;
-  border-radius: 10px;
-  background: #14213d;
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-.placar-botao:disabled { opacity: 0.6; cursor: progress; }
-.placar-secundario { background: #e6e9f0; color: #14213d; }
-.placar-botao:focus-visible, .placar-campo:focus-visible { outline: 3px solid #f2b544; outline-offset: 2px; }
+.placar-titulo { margin: 3px 0 0; color: #e0c4ff; font-size: 1rem; letter-spacing: .06em; }
+.placar-resumo { margin: 0; color: #f1eaff; font-weight: 700; }
+.placar-nota { margin: 0; color: #aaa2bc; font-size: .88rem; }
+.placar-mensagem { margin: 0; min-height: 1.2em; color: #a7e6bf; font-weight: 600; }
+.placar-mensagem.placar-erro { color: #ffb4a7; }
+.placar-formulario { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+.placar-campo { min-width: 0; min-height: 46px; padding: 8px 11px; border: 1px solid #625473; border-radius: 6px; background: #0d0b15; color: #f6f0ff; font: inherit; }
+.placar-campo::placeholder { color: #827890; }
+.placar-botao { min-height: 46px; padding: 8px 13px; border: 1px solid #795a98; border-radius: 6px; background: #492d64; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.placar-botao:hover { filter: brightness(1.18); }
+.placar-botao:disabled { opacity: .6; cursor: progress; }
+.placar-secundario { background: #242032; color: #e1d5ed; }
+.placar-botao:focus-visible, .placar-campo:focus-visible { outline: 3px solid #d8b4fe; outline-offset: 2px; }
 .placar-lista { margin: 0; padding-left: 1.6em; display: grid; gap: 4px; }
-.placar-lista li { padding: 4px 0; border-bottom: 1px solid #e6e9f0; }
+.placar-lista li { padding: 5px 0; border-bottom: 1px solid #30283a; }
 .placar-lista li > span { display: inline-flex; }
-.placar-nome { min-width: 8em; }
-.placar-pontos { float: right; font-variant-numeric: tabular-nums; font-weight: 700; }
-.placar-vazio { list-style: none; margin-left: -1.6em; color: #45506a; }
+.placar-nome { min-width: 8em; color: #e8ddf4; }
+.placar-pontos { float: right; color: #f0abfc; font-variant-numeric: tabular-nums; font-weight: 700; }
+.placar-vazio { list-style: none; margin-left: -1.6em; color: #aaa2bc; }
+.placar-arquivo { max-width: 100%; color: #dcd2e8; }
+@media (max-width: 620px) { .placar-formulario { grid-template-columns: 1fr; } }

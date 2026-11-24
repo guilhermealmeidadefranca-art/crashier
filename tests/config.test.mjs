@@ -23,8 +23,13 @@ test('o jogo funciona dentro do APK: caminhos relativos e placar carregado', () 
     assert.ok(!/(src|href)=["']\/(?!\/)/.test(html), nome + ': use caminhos relativos (sem / no começo)');
   }
   const index = readFileSync(pasta + 'index.html', 'utf8');
-  for (const script of ['config.js', 'placar.js', 'placar-ui.js']) {
+  for (const script of ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'jogo.js']) {
     assert.ok(index.includes('src="' + script + '"'), 'index.html precisa carregar ' + script);
   }
+  const ordem = ['config.js', 'placar.js', 'placar-ui.js', 'regras.js', 'audio.js', 'jogo.js']
+    .map((nome) => index.indexOf('src="' + nome + '"'));
+  assert.deepEqual(ordem, [...ordem].sort((a, b) => a - b), 'scripts do jogo precisam carregar na ordem prevista');
   assert.ok(index.includes('href="placar.css"'), 'index.html precisa carregar placar.css');
+  assert.ok(readFileSync(pasta + 'sw.js', 'utf8').includes("'./audio.js'"), 'offline cache inclui o som');
+  assert.doesNotMatch(readFileSync(pasta + 'audio.js', 'utf8'), /https?:\/\//, 'áudio não usa fontes externas');
 });

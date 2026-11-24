@@ -39,6 +39,12 @@ test('a paisagem muda em ciclos de bairro, rodovia, parque e floresta', () => {
     ['bairro', 'rodovia', 'parque', 'floresta', 'bairro']);
 });
 
+test('o intervalo de obstáculos tem limite seguro e sorteio reproduzível', () => {
+  assert.equal(Regras.intervaloSpawn(3600, () => 0.5), 1400);
+  assert.ok(Regras.intervaloSpawn(3600, () => 0.99) >= 1300);
+  assert.ok(Regras.intervaloSpawn(0, () => 0) > Regras.intervaloSpawn(3600, () => 0));
+});
+
 test('ação correta supera o obstáculo e soma bônus de pontuação', () => {
   let estado = Regras.avancar(Regras.novaPartida(), 100);
   estado = Regras.aplicarAcao(estado, 'deslizar', 100);

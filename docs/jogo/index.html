@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#A855F7">
+  <meta name="description" content="Corra pela cidade, salte, deslize e role em Crashier.">
   <title>Crashier</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icone-192.png">
@@ -13,43 +14,96 @@
   <script src="placar.js"></script>
   <script src="placar-ui.js"></script>
   <script src="regras.js"></script>
+  <script src="audio.js" defer></script>
   <script src="pwa.js" defer></script>
   <script src="jogo.js" defer></script>
 </head>
 <body>
   <main class="app">
     <header class="topo">
-      <div><p class="eyebrow">RUN UNTIL THE CITY ENDS</p><h1 id="titulo">CRASHIER</h1></div>
-      <p class="recorde">BEST <strong id="melhor">0</strong></p>
+      <div class="marca">
+        <p class="eyebrow">ENDLESS CITY RUN</p>
+        <h1 id="titulo">CRASHIER</h1>
+      </div>
+      <div class="recorde"><span>RECORDE</span><strong id="melhor">0</strong></div>
     </header>
 
-    <section id="tela-inicio" class="painel tela" aria-labelledby="titulo">
-      <div class="capa" aria-hidden="true"><span>▰</span><span>▰</span><span>▰</span><b>●</b></div>
-      <h2>Uma cidade. Nenhuma rota segura.</h2>
-      <p>Salte baixo ou alto, deslize por baixo de mesas e cercas e role para arrebentar caixas. Use a dica sobre cada objeto e reaja enquanto ele cruza sua posição.</p>
-      <p class="teclas">Teclado: <kbd>↑</kbd> salto baixo · <kbd>↑</kbd> duas vezes salto alto · <kbd>↓</kbd> deslizar · <kbd>→</kbd> rolar</p>
-      <button id="botao-jogar" class="botao primario" type="button">COMEÇAR A CORRIDA</button>
+    <details id="audio-config" class="audio-config">
+      <summary>ÁUDIO <span aria-hidden="true">♫</span></summary>
+      <div class="audio-linhas">
+        <label class="audio-linha"><span><input id="musica-ligada" type="checkbox" checked> Música</span><input id="volume-musica" type="range" min="0" max="100" value="22" aria-label="Volume da música"></label>
+        <label class="audio-linha"><span><input id="efeitos-ligados" type="checkbox" checked> Efeitos</span><input id="volume-efeitos" type="range" min="0" max="100" value="48" aria-label="Volume dos efeitos sonoros"></label>
+      </div>
+    </details>
+
+    <section id="tela-inicio" class="painel tela tela-inicio" aria-labelledby="titulo">
+      <div class="capa-cidade" aria-hidden="true">
+        <div class="lua"></div><div class="predio predio-a"><i></i><i></i><i></i><i></i></div>
+        <div class="predio predio-b"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="predio predio-c"><i></i><i></i><i></i></div>
+        <div class="silhueta"><i></i><b></b><em></em></div>
+        <div class="rua-capa"></div>
+      </div>
+      <div class="intro">
+        <p class="eyebrow">A CIDADE NÃO ESPERA</p>
+        <h2>Uma cidade. Nenhuma rota segura.</h2>
+        <p>Corra por casas, rodovias e parques. Leia a seta sobre cada obstáculo e escolha seu movimento antes de cruzá-lo.</p>
+      </div>
+      <div class="acoes-inicio">
+        <button id="botao-jogar" class="botao primario" type="button"><span aria-hidden="true">▶</span> COMEÇAR CORRIDA</button>
+        <p class="teclas"><kbd>↑</kbd> salto baixo · <kbd>↑ ↑</kbd> salto alto · <kbd>↓</kbd> deslizar · <kbd>→</kbd> rolar</p>
+      </div>
     </section>
 
     <section id="tela-jogo" class="painel partida" hidden aria-label="Partida">
-      <div class="hud"><span>DISTÂNCIA <strong id="pontos">0</strong> m</span><span>VELOCIDADE <strong id="velocidade">1.0</strong>x</span><span id="bioma">BAIRRO</span></div>
-      <canvas id="pista" width="480" height="270" aria-label="Pista de corrida pixelada"></canvas>
-      <p id="mensagem" class="mensagem" aria-live="polite">Prepare-se!</p>
+      <div class="hud">
+        <div class="stat"><span>DISTÂNCIA</span><strong><b id="distancia">0</b><small>m</small></strong></div>
+        <div class="stat"><span>PONTOS</span><strong id="pontos">0</strong></div>
+        <div class="stat stat-velocidade"><span>VELOCIDADE</span><strong><b id="velocidade">1.0</b><small>x</small></strong></div>
+        <div class="stat stat-bioma"><span>SETOR</span><strong id="bioma">BAIRRO</strong></div>
+        <button id="botao-pausar" class="botao-pausa" type="button" aria-label="Pausar corrida" title="Pausar (Esc)">Ⅱ</button>
+      </div>
+      <canvas id="pista" width="640" height="360" aria-label="Pista urbana pixelada"></canvas>
+      <p id="mensagem" class="mensagem" aria-live="polite">CORRA!</p>
       <div class="controles" aria-label="Ações do personagem">
-        <button class="acao" data-acao="baixo" type="button"><span>↗</span> SALTO BAIXO</button>
-        <button class="acao" data-acao="alto" type="button"><span>⬆</span> SALTO ALTO</button>
+        <button class="acao" data-acao="baixo" type="button"><span>↗</span> PULO BAIXO</button>
+        <button class="acao" data-acao="alto" type="button"><span>⬆</span> PULO ALTO</button>
         <button class="acao" data-acao="deslizar" type="button"><span>↘</span> DESLIZAR</button>
         <button class="acao" data-acao="rolar" type="button"><span>⟳</span> ROLAR</button>
       </div>
-      <p class="dica-controle">Siga a seta que aparece junto ao objeto. No celular, toque na ação certa.</p>
+      <p class="dica-controle">Use as setas do teclado ou toque nos botões. Esc pausa.</p>
     </section>
 
-    <section id="tela-fim" class="painel tela" hidden aria-label="Fim da partida">
-      <p class="eyebrow">FIM DE LINHA</p><h2>Você percorreu <strong id="resultado">0</strong> m</h2>
-      <p id="causa-fim"></p><p id="situacao-salvamento" role="status" aria-live="polite"></p>
-      <button id="botao-de-novo" class="botao primario" type="button">TENTAR DE NOVO</button>
+    <section id="tela-pausa" class="painel tela tela-modal" hidden aria-labelledby="titulo-pausa">
+      <p class="eyebrow">A CIDADE ESPERA</p>
+      <h2 id="titulo-pausa">Corrida pausada</h2>
+      <p>Distância: <strong id="pausa-distancia">0</strong> m · Pontos: <strong id="pausa-pontos">0</strong></p>
+      <div class="acoes-modal">
+        <button id="botao-continuar" class="botao primario" type="button">CONTINUAR</button>
+        <button id="botao-reiniciar-pausa" class="botao secundario" type="button">REINICIAR CORRIDA</button>
+        <button id="botao-menu-pausa" class="botao texto" type="button">VOLTAR AO MENU</button>
+      </div>
     </section>
-    <aside id="painel-placar" aria-label="Placar"></aside>
+
+    <section id="tela-fim" class="painel tela tela-fim" hidden aria-label="Fim da partida">
+      <p class="eyebrow">FIM DE LINHA</p>
+      <h2 id="titulo-fim">A cidade ficou para trás.</h2>
+      <p id="causa-fim" class="causa-fim"></p>
+      <div class="resultado-cartao">
+        <div><span>PONTOS</span><strong id="resultado">0</strong></div>
+        <div><span>DISTÂNCIA</span><strong><b id="resultado-distancia">0</b> m</strong></div>
+      </div>
+      <p id="novo-recorde" class="novo-recorde" hidden>✦ NOVO RECORDE ✦</p>
+      <p class="linha-recorde">Seu recorde: <strong id="recorde-final">0</strong></p>
+      <p id="situacao-salvamento" role="status" aria-live="polite"></p>
+      <div class="acoes-modal">
+        <button id="botao-de-novo" class="botao primario" type="button">CORRER DE NOVO</button>
+        <button id="botao-voltar-menu" class="botao secundario" type="button">VOLTAR AO MENU</button>
+      </div>
+    </section>
+
+    <aside id="painel-placar" aria-label="Placar e ranking"></aside>
+    <footer class="rodape">CRASHIER <span>·</span> SOMBRAS NA CIDADE, LUZES NO CAMINHO</footer>
   </main>
 </body>
 </html>

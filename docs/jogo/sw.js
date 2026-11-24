@@ -1,8 +1,8 @@
 // Service worker: tenta sempre a versão nova pela internet; sem internet, usa a cópia guardada.
-const CACHE = 'jogo';
+const CACHE = 'crashier-v2';
 const ARQUIVOS = [
   './', './index.html', './estilo.css', './placar.css', './config.js', './placar.js',
-  './placar-ui.js', './regras.js', './jogo.js', './pwa.js', './manifest.webmanifest',
+  './placar-ui.js', './regras.js', './audio.js', './jogo.js', './pwa.js', './manifest.webmanifest',
   './icone-192.png', './icone-512.png'
 ];
 
@@ -13,7 +13,12 @@ self.addEventListener('install', (evento) => {
 });
 
 self.addEventListener('activate', (evento) => {
-  evento.waitUntil(self.clients.claim());
+  evento.waitUntil(Promise.all([
+    self.clients.claim(),
+    caches.keys().then((nomes) => Promise.all(nomes
+      .filter((nome) => nome === 'jogo' || (nome.startsWith('crashier-') && nome !== CACHE))
+      .map((nome) => caches.delete(nome))))
+  ]));
 });
 
 self.addEventListener('fetch', (evento) => {
