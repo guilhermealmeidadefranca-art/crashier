@@ -2,51 +2,171 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Baixar o jogo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0913">
+  <meta name="description" content="CRASHIER: corrida infinita por uma cidade neon. Escolha sua rota, reaja aos obstáculos e jogue agora no navegador.">
+  <meta property="og:title" content="CRASHIER — A cidade corre contra você">
+  <meta property="og:description" content="Duas rotas. Uma sombra. Reaja antes que a cidade alcance você.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://guilhermealmeidadefranca-art.github.io/crashier/">
+  <meta property="og:image" content="https://guilhermealmeidadefranca-art.github.io/crashier/assets/crashier-city.svg">
+  <title>CRASHIER — A cidade corre contra você</title>
   <link rel="icon" href="jogo/icone-192.png">
-  <link rel="stylesheet" href="download.css">
-  <script src="jogo/config.js"></script>
-  <script src="jogo/placar.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"
-    integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1"
-    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-  <script src="download.js" defer></script>
+  <link rel="stylesheet" href="hub.css">
+  <script src="hub.js" defer></script>
 </head>
 <body>
-  <main class="pagina">
-    <header class="cartaz">
-      <p class="emoji" id="emoji" aria-hidden="true">🎮</p>
-      <h1 id="nome">Jogo</h1>
-      <p id="descricao"></p>
-      <div class="acoes">
-        <a id="baixar" class="botao" href="#">Baixar para Android (APK)</a>
-        <a class="botao botao-claro" href="jogo/">Jogar no navegador</a>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <header class="topbar" id="topo">
+    <a class="marca" href="#topo" aria-label="CRASHIER, início">
+      <span class="marca-simbolo" aria-hidden="true">C<span>↗</span></span>
+      <span>CRASHIER</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-principal" aria-label="Abrir navegação"><span></span><span></span></button>
+    <nav id="nav-principal" class="nav-principal" aria-label="Navegação principal">
+      <a href="#universo">O jogo</a>
+      <a href="#mecanicas">Mecânicas</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#controles">Controles</a>
+      <a class="nav-jogar" href="jogo/">JOGAR <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" aria-labelledby="hero-titulo">
+      <div class="hero-fundo" aria-hidden="true"></div>
+      <div class="hero-grade" aria-hidden="true"></div>
+      <div class="hero-conteudo shell">
+        <div class="hero-copy reveal">
+          <p class="eyebrow"><span class="ponto-ao-vivo"></span> ENDLESS RUNNER · CIDADE NEON</p>
+          <h1 id="hero-titulo">A cidade<br><em>corre contra</em><br>você.</h1>
+          <p class="hero-descricao">Duas rotas. Uma sombra. Reaja aos perigos, escolha seu caminho e atravesse a noite.</p>
+          <div class="hero-acoes">
+            <a class="botao botao-principal" href="jogo/"><span>JOGAR AGORA</span><b aria-hidden="true">↗</b></a>
+            <a class="botao botao-secundario" href="#universo">CONHEÇA O JOGO <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-meta"><span>JOGUE NO NAVEGADOR</span><i></i><span>GRÁTIS</span><i></i><span>DESKTOP + MOBILE</span></div>
+        </div>
+        <figure class="hero-art reveal" data-parallax="0.12">
+          <img src="assets/crashier-city.svg" alt="Arte original de CRASHIER: uma silhueta corre por duas vias suspensas entre prédios iluminados por neon." width="1440" height="900" fetchpriority="high">
+          <figcaption><span>01 / A CIDADE NÃO PARA</span><span>NOITE · SETOR 01</span></figcaption>
+          <span class="art-reticula" aria-hidden="true"></span>
+          <span class="hero-coordenada" aria-hidden="true">23°33' S<br>46°38' W</span>
+        </figure>
       </div>
-      <p id="versao" class="miudo" aria-live="polite"></p>
-    </header>
-
-    <section class="bloco" aria-labelledby="titulo-instalar">
-      <h2 id="titulo-instalar">Como instalar no celular</h2>
-      <ol>
-        <li>No celular Android, toque em <strong>Baixar para Android (APK)</strong>.</li>
-        <li>Abra o arquivo <strong>jogo.apk</strong> baixado. Se o celular pedir, permita que o navegador instale apps desconhecidos.</li>
-        <li>Toque em <strong>Instalar</strong>. Se aparecer o aviso do Play Protect, toque em <strong>Mais detalhes › Instalar mesmo assim</strong>.</li>
-      </ol>
-      <p class="miudo">Não conseguiu instalar? Toque em <strong>Jogar no navegador</strong> e, no menu do Chrome, escolha <strong>Adicionar à tela inicial</strong>. O jogo vira um ícone, igual a um aplicativo.</p>
+      <div class="hero-rodape shell" aria-hidden="true"><span>DESLIZE PARA EXPLORAR</span><span class="linha-scroll"></span><span>SCROLL / 001</span></div>
     </section>
 
-    <section class="bloco bloco-qr" id="bloco-qr" hidden aria-labelledby="titulo-qr">
-      <h2 id="titulo-qr">Abrir esta página no celular</h2>
-      <img id="qr" alt="QR code com o endereço desta página" width="200" height="200">
-      <p class="miudo" id="endereco"></p>
+    <section class="manifesto shell section" id="universo" aria-labelledby="universo-titulo">
+      <div class="section-index reveal"><span>01</span><i></i><span>O UNIVERSO</span></div>
+      <div class="manifesto-grid">
+        <h2 class="reveal" id="universo-titulo">A noite é longa.<br><em>O erro, instantâneo.</em></h2>
+        <div class="manifesto-copy reveal">
+          <p>CRASHIER é uma corrida urbana sem linha de chegada. Uma sombra atravessa bairros, rodovias e áreas verdes enquanto a cidade muda ao redor dela.</p>
+          <p>Leia o obstáculo, escolha entre duas rotas e acerte o movimento. Quanto mais longe você vai, mais rápido tudo acontece.</p>
+        </div>
+      </div>
+      <div class="manifesto-dados reveal">
+        <div><strong>02</strong><span>ROTAS PARA TROCAR</span></div>
+        <div><strong>04</strong><span>AÇÕES DE MOVIMENTO</span></div>
+        <div><strong>∞</strong><span>UMA CIDADE EM MOVIMENTO</span></div>
+      </div>
     </section>
 
-    <section class="bloco" id="bloco-ranking" hidden aria-labelledby="titulo-ranking">
-      <h2 id="titulo-ranking">Ranking ao vivo</h2>
-      <ol id="ranking" class="ranking"></ol>
-      <p class="miudo">Pontuações guardadas na Planilha Google do jogo, pelo Apps Script.</p>
+    <section class="mecanicas section" id="mecanicas" aria-labelledby="mecanicas-titulo">
+      <div class="shell">
+        <div class="section-index reveal"><span>02</span><i></i><span>LEIA A RUA</span></div>
+        <div class="section-heading reveal"><h2 id="mecanicas-titulo">Cada obstáculo<br>pede uma <em>resposta.</em></h2><p>Veja o aviso. Escolha o movimento. Continue correndo.</p></div>
+        <div class="cards-mecanica">
+          <article class="card-mecanica reveal">
+            <div class="icone-mecanica icone-salto" aria-hidden="true"><span>↑</span><i></i></div>
+            <div class="card-numero">01 / ELEVE</div><h3>Salte</h3><p>Use o salto baixo para passar por perigos menores. Um segundo toque no alto ativa o salto alto.</p>
+            <span class="tag-acao">PULO BAIXO · PULO ALTO</span>
+          </article>
+          <article class="card-mecanica reveal">
+            <div class="icone-mecanica icone-deslize" aria-hidden="true"><span>⌁</span><i></i></div>
+            <div class="card-numero">02 / ABAIXE</div><h3>Deslize</h3><p>Baixe o corpo e passe sob cercas, mesas e galhos que bloqueiam o caminho.</p>
+            <span class="tag-acao">DESLIZE</span>
+          </article>
+          <article class="card-mecanica reveal">
+            <div class="icone-mecanica icone-rolagem" aria-hidden="true"><span>⟳</span><i></i></div>
+            <div class="card-numero">03 / ATRAVESSE</div><h3>Role</h3><p>Encontre uma caixa de madeira e role no momento certo para quebrá-la e seguir em frente.</p>
+            <span class="tag-acao">ROLAGEM · QUEBRA</span>
+          </article>
+          <article class="card-mecanica reveal">
+            <div class="icone-mecanica icone-rotas" aria-hidden="true"><span>↗</span><span>↘</span><i></i></div>
+            <div class="card-numero">04 / ESCOLHA</div><h3>Troque de rota</h3><p>As duas vias têm obstáculos próprios. Mude de faixa para encontrar outra passagem.</p>
+            <span class="tag-acao">ROTA SUPERIOR · INFERIOR</span>
+          </article>
+          <article class="card-mecanica card-mecanica-largo reveal">
+            <div class="icone-obstaculos" aria-hidden="true"><b></b><i></i><span></span></div>
+            <div class="card-numero">05 / FIQUE ALERTA</div><h3>A rua muda a cada setor</h3><p>Poças, cones, carros, caminhões e outros obstáculos aparecem conforme a cidade passa de um bairro para outro.</p>
+            <span class="tag-acao">BAIRRO · RODOVIA · PARQUE · FLORESTA</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="galeria section" id="galeria" aria-labelledby="galeria-titulo">
+      <div class="shell">
+        <div class="section-index reveal"><span>03</span><i></i><span>VISUAL DA CIDADE</span></div>
+        <div class="section-heading reveal"><h2 id="galeria-titulo">Uma cidade<br>em <em>quatro setores.</em></h2><p>A arte do topo é uma ilustração original. As capturas reais do jogo serão adicionadas aqui.</p></div>
+        <div class="galeria-grid">
+          <figure class="slot-galeria slot-grande reveal"><div class="slot-arte slot-bairro" aria-hidden="true"><span class="slot-lua"></span><i class="torre torre-a"></i><i class="torre torre-b"></i><i class="torre torre-c"></i><b class="slot-via"></b><b class="slot-via slot-via-baixa"></b><em class="slot-corredor"></em></div><figcaption><span>01 / BAIRRO</span><span>CAPTURA REAL EM BREVE</span></figcaption></figure>
+          <figure class="slot-galeria reveal"><div class="slot-arte slot-rodovia" aria-hidden="true"><span class="placa-decorativa">SAÍDA 08</span><i></i><b></b></div><figcaption><span>02 / RODOVIA</span><span>ESPAÇO PARA CAPTURA</span></figcaption></figure>
+          <figure class="slot-galeria reveal"><div class="slot-arte slot-verde" aria-hidden="true"><span class="arvore arvore-a"></span><span class="arvore arvore-b"></span><span class="arvore arvore-c"></span><b></b></div><figcaption><span>03 / PARQUE + FLORESTA</span><span>ESPAÇO PARA CAPTURA</span></figcaption></figure>
+        </div>
+        <p class="galeria-nota reveal"><span aria-hidden="true">✳</span> Os quadros acima são espaços reservados, não imagens de gameplay.</p>
+      </div>
+    </section>
+
+    <section class="controles section" id="controles" aria-labelledby="controles-titulo">
+      <div class="shell controles-grid">
+        <div class="controles-copy">
+          <div class="section-index reveal"><span>04</span><i></i><span>CONTROLES</span></div>
+          <h2 class="reveal" id="controles-titulo">Reaja no<br><em>seu ritmo.</em></h2>
+          <p class="reveal">Teclado, toque ou gesto. Os comandos estão disponíveis durante a corrida.</p>
+          <a class="texto-link reveal" href="jogo/">ABRIR O JOGO <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="painel-controles reveal">
+          <div class="painel-controles-head"><span>DESKTOP</span><span>TECLADO</span></div>
+          <div class="linha-controle"><span class="keycap">A</span><span>Rota inferior</span><b>ROTA</b></div>
+          <div class="linha-controle"><span class="keycap">D</span><span>Rota superior</span><b>ROTA</b></div>
+          <div class="linha-controle"><span class="keycap keycap-duplo">↑ <small>+ ↑</small></span><span>Salto baixo / alto</span><b>MOVIMENTO</b></div>
+          <div class="linha-controle"><span class="keycap">↓</span><span>Deslizar</span><b>MOVIMENTO</b></div>
+          <div class="linha-controle"><span class="keycap">→</span><span>Rolar / quebrar caixa</span><b>MOVIMENTO</b></div>
+          <div class="linha-controle"><span class="keycap">ESC</span><span>Pausar corrida</span><b>SISTEMA</b></div>
+          <div class="painel-controles-head mobile-head"><span>MOBILE</span><span>TOQUE + GESTO</span></div>
+          <div class="linha-controle"><span class="gesto">↕</span><span>Arraste para cima: salto (mais longo: salto alto); para baixo: deslize</span><b>GESTO</b></div>
+          <div class="linha-controle"><span class="gesto">←</span><span>Arraste à esquerda: rota superior</span><b>GESTO</b></div>
+          <div class="linha-controle"><span class="gesto">→</span><span>Arraste à direita: rolar e quebrar caixas</span><b>GESTO</b></div>
+          <div class="linha-controle"><span class="gesto">●</span><span>Toque nos botões de rota e ação na tela</span><b>TOQUE</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="desenvolvimento section" id="novidades" aria-labelledby="novidades-titulo">
+      <div class="shell">
+        <div class="section-index reveal"><span>05</span><i></i><span>DESENVOLVIMENTO</span></div>
+        <div class="dev-card reveal">
+          <div><p class="eyebrow">DIÁRIO DE BORDO</p><h2 id="novidades-titulo">A cidade continua<br><em>em construção.</em></h2><p>Este é o canal para notas de versão, correções e novidades confirmadas do CRASHIER. Consulte as releases para ver o histórico publicado.</p></div>
+          <a class="botao botao-secundario" href="https://github.com/guilhermealmeidadefranca-art/crashier/releases" target="_blank" rel="noreferrer">VER RELEASES <span aria-hidden="true">↗</span></a>
+          <span class="dev-sinal" aria-hidden="true">C_</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-final" aria-labelledby="cta-titulo">
+      <div class="cta-grade" aria-hidden="true"></div>
+      <div class="shell cta-conteudo reveal"><p class="eyebrow">SUA PRÓXIMA CORRIDA COMEÇA AQUI</p><h2 id="cta-titulo">A rua está<br><em>esperando.</em></h2><div class="hero-acoes"><a class="botao botao-principal" href="jogo/"><span>JOGAR AGORA</span><b aria-hidden="true">↗</b></a><a class="botao botao-secundario" href="https://github.com/guilhermealmeidadefranca-art/crashier/releases/latest/download/jogo.apk">BAIXAR APK <span aria-hidden="true">↓</span></a></div></div>
     </section>
   </main>
+
+  <footer class="footer shell">
+    <a class="marca" href="#topo"><span class="marca-simbolo" aria-hidden="true">C<span>↗</span></span><span>CRASHIER</span></a>
+    <p>FEITO PARA QUEM NÃO PARA.</p>
+    <div><a href="jogo/">JOGAR</a><a href="https://github.com/guilhermealmeidadefranca-art/crashier" target="_blank" rel="noreferrer">GITHUB ↗</a></div>
+    <small>© <span id="ano">2026</span> CRASHIER · UM JOGO INDIE</small>
+  </footer>
 </body>
 </html>
