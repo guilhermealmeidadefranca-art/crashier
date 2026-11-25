@@ -1,7 +1,6 @@
 import { Container, Graphics } from '../../vendor/pixi.min.mjs';
 
 const QUADROS = 8;
-const DURACAO_ROLAMENTO = 850;
 
 function bloco(g, x, y, largura, altura, cor, alpha = 1) {
   g.rect(x, y, largura, altura).fill({ color: cor, alpha });
@@ -24,6 +23,10 @@ export function criarPersonagem(stage, regras) {
   const trilha = new Graphics();
   raiz.addChild(trilha);
   const corpo = new Container();
+  // Mantém os mesmos pontos no chão quando parado e dá um pivô estável
+  // para inclinações, rolagens e a queda.
+  corpo.pivot.set(34, -46);
+  corpo.position.set(34, -46);
   raiz.addChild(corpo);
 
   const pernaFundo = membro(10, 31, '#17121c', '#322142'); pernaFundo.position.set(26, -34);
@@ -87,15 +90,15 @@ export function criarPersonagem(stage, regras) {
     }
     const recuperando = Boolean(!ativa && acao && agora < fimRecuperacao);
 
-    raiz.position.set(150, chao - altura + (deslizando ? 9 : rolando ? 7 : 0));
+    raiz.position.set(150, chao - altura + (rolando ? 8 : 0));
     sombra.position.set(176, chao - 3);
     sombra.scale.x = Math.max(.42, 1 - altura / 110);
     sombra.alpha = .48 - Math.min(.24, altura / 420);
 
-    raiz.rotation = rolando ? p * Math.PI * 2 : 0;
-    corpo.rotation = deslizando ? -.04 : pulando ? -.08 * Math.cos(Math.PI * p) : 0;
+    raiz.rotation = 0;
+    corpo.rotation = rolando ? p * Math.PI * 2 : deslizando ? -.04 : pulando ? -.08 * Math.cos(Math.PI * p) : 0;
     corpo.scale.set(deslizando ? 1.28 : rolando ? .88 : 1, deslizando ? .68 : rolando ? .83 : 1);
-    corpo.y = deslizando ? 20 + Math.sin(p * Math.PI) * 3 : recuperando ? 2 : 0;
+    corpo.position.set(34, -46 + (deslizando ? 15 + Math.sin(p * Math.PI) * 3 : recuperando ? 2 : 0));
     pernaFundo.rotation = pulando ? 1.0 : deslizando ? -.45 : rolando ? .3 : Math.sin(fase) * .72;
     pernaFrente.rotation = pulando ? -.92 : deslizando ? .36 : rolando ? -.4 : -Math.sin(fase) * .72;
     peFundo.rotation = pulando ? 1.15 : 0;
@@ -117,10 +120,10 @@ export function criarPersonagem(stage, regras) {
 
   function animarQueda(progresso) {
     corpo.rotation = .12 + Math.max(0, Math.min(1, progresso)) * .76;
-    corpo.y = Math.max(0, progresso) * 10;
+    corpo.position.set(34, -46 + Math.max(0, progresso) * 10);
     bracoFundo.rotation = .8; bracoFrente.rotation = -.7;
     pernaFundo.rotation = .65; pernaFrente.rotation = -.4;
   }
 
-  return { raiz, sombra, atualizar, animarQueda, redefinir() { raiz.rotation = 0; corpo.rotation = 0; corpo.y = 0; } };
+  return { raiz, corpo, sombra, atualizar, animarQueda, redefinir() { raiz.rotation = 0; corpo.rotation = 0; corpo.position.set(34, -46); corpo.scale.set(1); } };
 }

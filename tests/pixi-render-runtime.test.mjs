@@ -30,6 +30,19 @@ test('Pixi scene graph desenha bioma, corredor, faixa e obstáculo sem API invá
   assert.ok(mundo.corredor.raiz.y < regras.FAIXAS.inferior.chao);
 });
 
+test('rolagem gira em torno do centro do corpo sem orbitar o ponto no chão', () => {
+  const stage = new pixi.Container();
+  const mundo = criarMundo({ stage, renderer: { render() {} } }, regras);
+  let estado = regras.aplicarAcao(regras.novaPartida(), 'rolar', 0);
+  const simulacao = { estado, distanciaPista: 0, obstaculos: [] };
+  mundo.renderizar(simulacao, 425, .016);
+  const centro = mundo.corredor.corpo.toGlobal({ x: 34, y: -46 });
+  assert.equal(mundo.corredor.raiz.rotation, 0);
+  assert.ok(Math.abs(mundo.corredor.corpo.rotation - Math.PI) < .01);
+  assert.ok(Math.abs(centro.x - 184) < .01);
+  assert.ok(Math.abs(centro.y - 264) < .01);
+});
+
 test('quebra gera fragmentos de madeira e os remove depois da animação', () => {
   const stage = new pixi.Container();
   const mundo = criarMundo({ stage, renderer: { render() {} } }, regras);

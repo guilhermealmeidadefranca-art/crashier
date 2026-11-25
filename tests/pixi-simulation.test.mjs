@@ -57,3 +57,13 @@ test('reiniciar limpa obstáculos, pontos e estado terminal', () => {
   assert.equal(corrida.simulacao.obstaculos.length, 0);
   assert.equal(corrida.simulacao.estado.pontos, 0);
 });
+
+test('corrida longa remove obstáculos antigos e mantém rota, distância e velocidade finitas', () => {
+  const corrida = criarSimulacao(regras, { sorteio: () => 0 });
+  for (let passo = 1; passo <= 6000; passo++) corrida.avancar(40, passo * 40);
+  assert.equal(corrida.simulacao.terminada, false);
+  assert.ok(corrida.simulacao.proximoId > 100);
+  assert.ok(corrida.simulacao.estado.distancia > 1200);
+  assert.ok(Number.isFinite(corrida.simulacao.estado.velocidade));
+  assert.ok(corrida.simulacao.obstaculos.length < 6);
+});

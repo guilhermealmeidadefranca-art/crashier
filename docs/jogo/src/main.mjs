@@ -50,7 +50,6 @@ let anterior = 0;
 let pausada = false;
 let finalizada = false;
 let inicioPausa = 0;
-let desligarControles = () => {};
 
 function tocarMusica() {
   CrashierAudio.preparar();
@@ -137,7 +136,6 @@ function finalizar(motivo, agora) {
   if (finalizada) return;
   finalizada = true; pausada = false;
   cancelAnimationFrame(frame); frame = 0;
-  if (desligarControles) { desligarControles(); desligarControles = () => {}; }
   CrashierAudio.pararMusica(); CrashierAudio.efeito('impacto');
   const recorde = Placar.progresso().melhor;
   const resultado = telas.fim(corrida.simulacao.estado, motivo, recorde);
@@ -156,9 +154,12 @@ function finalizar(motivo, agora) {
       ? 'Recorde guardado neste aparelho. Entre no placar para sincronizar com a nuvem.' : 'Recorde registrado.';
   }).catch(() => { $('situacao-salvamento').textContent = 'Não foi possível salvar o recorde agora.'; });
 
+  let quadroAnteriorQueda = agora;
   const desenharQueda = (tempo) => {
     const t = Math.min(1, Math.max(0, (tempo - agora) / 560));
-    mundo.renderizar(corrida.simulacao, tempo, Math.max(0, (tempo - agora) / 1000), t);
+    const dt = Math.max(0, Math.min(40, tempo - quadroAnteriorQueda)) / 1000;
+    quadroAnteriorQueda = tempo;
+    mundo.renderizar(corrida.simulacao, tempo, dt, t);
     if (t < 1 && telas.atual() === 'tela-fim') frameMorte = requestAnimationFrame(desenharQueda);
     else frameMorte = 0;
   };
@@ -168,7 +169,6 @@ function finalizar(motivo, agora) {
 function voltarMenu() {
   cancelAnimationFrame(frame); cancelAnimationFrame(frameMorte);
   frame = 0; frameMorte = 0; pausada = false; finalizada = false;
-  desligarControles(); desligarControles = () => {};
   mensagem.before(telaPixi);
   telaPixi.hidden = false;
   corrida.reiniciar(); mundo.limpar(); CrashierAudio.pararMusica();
@@ -183,7 +183,9 @@ $('botao-reiniciar-pausa').addEventListener('click', iniciar);
 $('botao-menu-pausa').addEventListener('click', voltarMenu);
 $('botao-voltar-menu').addEventListener('click', voltarMenu);
 
-desligarControles = ligarControles({
+// Um único conjunto de listeners vive durante todo o app. As funções de ação
+// ignoram comandos fora da partida, então recomeçar não perde nem duplica controles.
+ligarControles({
   canvas: engine.canvas,
   telaAtual: telas.atual,
   acionar,

@@ -40,7 +40,10 @@ export function ligarControles({ canvas, telaAtual, acionar, trocarFaixa, altern
   };
   remover.push(guardar(window, 'keydown', tecla));
 
-  const pressionarCanvas = (evento) => { primeiroToque = { x: evento.clientX, y: evento.clientY }; };
+  const pressionarCanvas = (evento) => {
+    primeiroToque = { x: evento.clientX, y: evento.clientY };
+    if (evento.pointerId != null) canvas.setPointerCapture?.(evento.pointerId);
+  };
   const soltarCanvas = (evento) => {
     if (!primeiroToque || telaAtual() !== 'tela-jogo') return;
     const dx = evento.clientX - primeiroToque.x;

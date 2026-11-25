@@ -94,8 +94,30 @@ export function criarCidade(stage) {
   const pistas = new Container();
   const sombras = new Graphics();
   const estradas = new Graphics();
-  const linhas = new Graphics();
-  pistas.addChild(sombras, estradas, linhas);
+  const apoios = new Graphics();
+  const marcasSuperior = new Graphics();
+  const marcasInferior = new Graphics();
+  pistas.addChild(sombras, apoios, estradas, marcasSuperior, marcasInferior);
+  for (const [nome, piso] of Object.entries(PISOS)) {
+    const superior = nome === 'superior';
+    const neon = superior ? '#5ee7e2' : '#d98aff';
+    const asfalto = superior ? '#272b3a' : '#302638';
+    retangulo(sombras, 0, piso - 4, W, 68, '#0a0910', .92);
+    retangulo(estradas, 0, piso - 2, W, 5, '#9790a7');
+    retangulo(estradas, 0, piso + 3, W, 52, asfalto);
+    retangulo(estradas, 0, piso + 4, W, 2, neon, .8);
+    retangulo(estradas, 0, piso + 55, W, 5, '#15131c');
+    retangulo(estradas, 0, piso - 1, W, 2, neon, .84);
+    const marcas = superior ? marcasSuperior : marcasInferior;
+    for (let x = 20; x < W + 126; x += 126) {
+      retangulo(marcas, x, piso + 31, 48, 3, superior ? '#a8c5c7' : '#d8c087', .82);
+    }
+  }
+  for (let x = -176; x < W + 176; x += 176) {
+    retangulo(apoios, x + 34, PISOS.superior + 57, 13, H - PISOS.superior - 57, '#191722');
+    retangulo(apoios, x + 25, PISOS.superior + 56, 31, 4, '#675577');
+    retangulo(apoios, x, PISOS.inferior + 60, 80, 4, '#5c7253', .8);
+  }
   stage.addChild(pistas);
 
   const placas = new Container();
@@ -156,28 +178,9 @@ export function criarCidade(stage) {
       camada._grupos[0].x = x;
       camada._grupos[1].x = x + camada._larguraFaixa;
     });
-    sombras.clear(); estradas.clear(); linhas.clear();
-    for (const [nome, piso] of Object.entries(PISOS)) {
-      const superior = nome === 'superior';
-      const neon = superior ? '#5ee7e2' : '#d98aff';
-      const asfalto = superior ? '#272b3a' : '#302638';
-      retangulo(sombras, 0, piso - 4, W, 68, '#0a0910', .92);
-      retangulo(estradas, 0, piso - 2, W, 5, '#9790a7');
-      retangulo(estradas, 0, piso + 3, W, 52, asfalto);
-      retangulo(estradas, 0, piso + 4, W, 2, neon, .8);
-      retangulo(estradas, 0, piso + 55, W, 5, '#15131c');
-      const risco = (distance * (superior ? 1.16 : 1.55)) % 126;
-      for (let x = -risco; x < W + 60; x += 126) retangulo(linhas, x + 20, piso + 31, 48, 3, superior ? '#a8c5c7' : '#d8c087', .82);
-      for (let x = -((distance * .42) % 176); x < W + 70; x += 176) {
-        if (superior) {
-          retangulo(sombras, x + 34, piso + 57, 13, H - piso, '#191722');
-          retangulo(sombras, x + 25, piso + 56, 31, 4, '#675577');
-        } else {
-          retangulo(estradas, x, piso + 60, 80, 4, '#5c7253', .8);
-        }
-      }
-      retangulo(linhas, 0, piso - 1, W, 2, neon, .84);
-    }
+    marcasSuperior.x = -((distance * 1.16) % 126);
+    marcasInferior.x = -((distance * 1.55) % 126);
+    apoios.x = -((distance * .42) % 176);
     cidadeReflexo.x = -(distance * .3 % 116);
     cidadeReflexo.alpha = .7 + Math.sin(distance * .014) * .12;
   }
